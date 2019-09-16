@@ -252,7 +252,7 @@ class WebhookManager:
         await self.update()
         await TwitterUser.create(id=r['id_str'], webhook_id=self.webhook_data.id, period=await self.get_period(),
                                  discord_user_id=str(self.author.id), uuid=str(uuid.uuid4()))
-        await NewUser.create(webhook_id=self.webhook_data.id, twitter_id=r['id_str'])
+        await NewUser.create(webhook_id=self.webhook_data.id, twitter_id=r['id_str'], uuid=str(uuid.uuid4()))
 
         await self.wait_for_move()
 
