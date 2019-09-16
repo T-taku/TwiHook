@@ -42,7 +42,7 @@ main_operations = {
     '\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}': '個々のフックを停止・開始します。',
     '\N{INPUT SYMBOL FOR LATIN SMALL LETTERS}': 'フックの文章を変更します。',
     '\N{INFORMATION SOURCE}': 'フックの情報を表示します。',
-    '\N{CLOCK FACE ONE OCLOCK}': 'フックの読み込み間隔を変更します。5分以内に設定すると、サブスクリプションが発生します。',
+    '\N{CLOCK FACE ONE OCLOCK}': 'フックの読み込み間隔を変更します。5分もしくは1分に設定すると、サブスクリプションが発生します。',
     '\N{BLACK SQUARE FOR STOP}': '終了します',
 }
 error_operations = {
@@ -57,12 +57,16 @@ delete_hook_operations = {
 show_hook_operations = {
     '\N{LEFTWARDS BLACK ARROW}': '戻る',
 }
+change_clock_operations = {
+    '\N{LEFTWARDS BLACK ARROW}': '戻る',
+}
 state_to_reactions = {
     'main': main_operations.keys(),
     'error': error_operations.keys(),
     'new_hook': new_hook_operations.keys(),
     'delete_hook': delete_hook_operations.keys(),
     'show_hook': show_hook_operations.keys(),
+    'change_clock': change_clock_operations.keys(),
 }
 
 
@@ -439,6 +443,7 @@ class WebhookManager:
         await self.wait_for_move()
 
     async def change_clock(self):
+        self.update_state('change_clock')
         self.embed = discord.Embed(title='時間の変更', description='投稿確認間隔を変更します。好きな投稿確認間隔のリアクションを押してください\n'
                                                               '0\N{combining enclosing keycap} 10分\n'
                                                               '1\N{combining enclosing keycap} 5分\n'
@@ -487,6 +492,8 @@ class WebhookManager:
 
         self.embed.add_field(name='変更完了', value='正常に変更が完了しました。', inline=False)
         await self.update()
+        await self.trash_my_reactions()
+        await self.wait_for_move()
 
     async def end(self):
         await self.message.delete()
