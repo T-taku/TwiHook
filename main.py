@@ -13,6 +13,7 @@ bot = MyBot('/', help_command=PaginatedHelpCommand())
 extensions = [
     'cogs.manager',
     'cogs.webhook',
+    'cogs.admin',
 ]
 
 
