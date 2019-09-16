@@ -41,4 +41,8 @@ class Subscription(db.Model):
     uuid = db.Column(db.String(100), primary_key=True)
 
 
-
+class NewUser(db.Model):
+    __tablename__ = 'newuser'
+    webhook_id = db.Column(db.String(100))
+    twitter_id = db.Column(db.String(100))
+    uuid = db.Column(db.String(100), primary_key=True)

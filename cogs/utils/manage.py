@@ -5,7 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
 import uuid
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, Subscription
+from cogs.utils.database import TwitterUser, Subscription, NewUser
 from .error import CannotPaginate
 
 twitter_compile = re.compile(r'twitter\.com/(?P<username>[a-zA-Z0-9_\-.]{3,15})')
@@ -252,9 +252,7 @@ class WebhookManager:
         await self.update()
         await TwitterUser.create(id=r['id_str'], webhook_id=self.webhook_data.id, period=await self.get_period(),
                                  discord_user_id=str(self.author.id), uuid=str(uuid.uuid4()))
-        self.back = self.main_menu
-        with open('../../waiting.txt', 'a') as f:
-            f.write(f'{self.webhook_data.id} {r["id"]}\n')
+        await NewUser.create(webhook_id=self.webhook_data.id, twitter_id=r['id_str'])
 
         await self.wait_for_move()
 
