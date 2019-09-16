@@ -76,6 +76,11 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
         params['count'] = 1
     while not loop.is_closed():
         await asyncio.sleep(twitter_user.period * 60)
+        u = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id)\
+            .where(TwitterUser.id == twitter_user.id).gino.first()
+        if not u:
+            break
+
         if last_id:
             params['since_id'] = last_id
         try:
