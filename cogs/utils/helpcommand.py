@@ -28,7 +28,7 @@ class HelpPaginator(Pages):
         self.embed.title = self.title
 
         if self.is_bot:
-            value = 'さらにヘルプが必要であれば、公式サーバーへ -> '
+            value = 'さらにヘルプが必要であれば、公式サーバーへ -> https://discord.gg/2HFMyUb'
             self.embed.add_field(name='Support', value=value, inline=False)
 
         self.embed.set_footer(text=f'さらにヘルプが必要であれば"{self.prefix}help command" を使用してください。')
