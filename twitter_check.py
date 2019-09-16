@@ -113,6 +113,7 @@ async def main():
         twitter = get_client(token=auth.token, secret=auth.secret)
         loop.create_task(check_twitter(user, twitter))
     loop.create_task(check_new_user())
+    loop.create_task(wait_new_day())
 
     await event.wait()
     loop.stop()
