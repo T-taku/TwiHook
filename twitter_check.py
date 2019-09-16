@@ -85,6 +85,10 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
         for tweet in r[::-1]:
             if tweet['retweeted']:
                 continue
+            if not twitter_user.text:
+                loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
+                                                           '管理人は設定をお願いします。'))
+                continue
             text = replace_ifttt(twitter_user.text, tweet)
             loop.create_task(send_webhook(webhook_url, text))
 
@@ -100,6 +104,7 @@ async def main():
         auth = await Auth.query.where(Auth.id == user.discord_user_id).gino.first()
         twitter = get_client(token=auth.token, secret=auth.secret)
         loop.create_task(check_twitter(user, twitter))
+    loop.create_task(check_new_user())
 
     await event.wait()
     loop.stop()
