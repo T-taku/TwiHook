@@ -69,10 +69,15 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
     webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
     params = {'user_id': int(twitter_user.id), 'count': 20, 'exclude_replies': 'false'}
     r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
-    last_id = r[0]['id']
+    if r:
+        last_id = r[0]['id']
+    else:
+        last_id = None
+        params['count'] = 1
     while not loop.is_closed():
         await asyncio.sleep(twitter_user.period * 60)
-        params['since_id'] = last_id
+        if last_id:
+            params['since_id'] = last_id
         try:
             r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
         except Exception:
@@ -84,6 +89,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
             loop.create_task(send_webhook(webhook_url, text))
 
         last_id = r[0]['id']
+        params['count'] = 20
 
 
 async def main():
