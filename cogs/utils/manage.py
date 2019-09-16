@@ -419,7 +419,6 @@ class WebhookManager:
             text = examples[count_operations.index(str(reaction.emoji))]
         else:
             text = message.content
-        print(twitter_user.text)
         await twitter_user.update(text=tobase64(text)).apply()
         self.embed.add_field(name='完了', value='適切に変更されました。', inline=False)
         await self.update()
