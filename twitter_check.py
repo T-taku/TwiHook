@@ -104,6 +104,9 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
 async def main():
     await db.set_bind('postgresql://localhost/twihook')
     await db.gino.create_all()
+    for _user in await NewUser.query.gino.all():
+        await _user.delete()
+
     twitter_users = await TwitterUser.query.gino.all()
     for user in twitter_users:
         auth = await Auth.query.where(Auth.id == user.discord_user_id).gino.first()
