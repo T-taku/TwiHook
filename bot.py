@@ -10,7 +10,7 @@ class MyBot(commands.Bot):
     def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, **options)
         self.db = db
-        self.auth: AuthManager = AuthManager(self, self.db)
+        self.auth = AuthManager(self, self.db)
         self.loop.create_task(self.db_setup())
 
     async def on_command_error(self, context, exception):
