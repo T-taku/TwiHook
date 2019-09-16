@@ -5,6 +5,7 @@ import aiohttp
 import discord
 import datetime
 import base64
+import os
 loop = asyncio.get_event_loop()
 event = asyncio.Event()
 
@@ -31,6 +32,20 @@ def replace_ifttt(text, tweet):
         text = text.replace(key, value)
 
     return text
+
+
+async def check_new_user():
+    while not loop.is_closed():
+        await asyncio.sleep(60)
+        with open('waiting.txt') as f:
+            for line in f.read().split('\n'):
+                webhook_id, twitter_id = line.split()
+                user = await TwitterUser.query.where(TwitterUser.id == twitter_id)\
+                    .where(TwitterUser.webhook_id == webhook_id).gino.first()
+                auth = await Auth.query.where(Auth.id == user.discord_user_id).gino.first()
+                twitter = get_client(token=auth.token, secret=auth.secret)
+                loop.create_task(check_twitter(user, twitter))
+        os.remove('waiting.txt')
 
 
 async def wait_new_day():

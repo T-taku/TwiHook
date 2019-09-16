@@ -253,6 +253,9 @@ class WebhookManager:
         await TwitterUser.create(id=r['id_str'], webhook_id=self.webhook_data.id, period=await self.get_period(),
                                  discord_user_id=str(self.author.id), uuid=str(uuid.uuid4()))
         self.back = self.main_menu
+        with open('../../waiting.txt', 'a') as f:
+            f.write(f'{self.webhook_data.id} {r["id"]}\n')
+
         await self.wait_for_move()
 
     async def delete_hook(self):
