@@ -462,7 +462,7 @@ class WebhookManager:
             return
 
         subscription = await Subscription.query.where(Subscription.id == self.webhook_data.discord_user_id).gino.first()
-        if reactions[str(reaction.emoji)] in [1, 5]:
+        if reactions[str(reaction.emoji)] in [1]:
             if not subscription:
                 await self.error('サブスクリプションがされていません。`subscription` コマンドでサブスクリプションの確認をしてください。')
                 return
@@ -477,7 +477,8 @@ class WebhookManager:
             for user in await self.get_twitter_users():
                 await user.update(period=reactions[str(reaction.emoji)]).apply()
         else:
-            if await self.get_period() in [1, 5]:
+            if await self.get_period() in [1]:
+                #  課金のとこで来たらここを[1, 5]に変更
                 if subscription:
                     await subscription.update(residue=subscription.residue + 1).apply()
 
