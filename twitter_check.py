@@ -93,9 +93,9 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
                     continue
                 text = replace_ifttt(twitter_user.text, tweet)
                 loop.create_task(send_webhook(webhook_url, text))
-
-            last_id = r[0]['id']
             params['count'] = 20
+            if r:
+                last_id = r[0]['id']
         except Exception:
             import traceback
             traceback.print_exc()
