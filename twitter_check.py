@@ -39,6 +39,8 @@ async def check_new_user():
         for _user in await NewUser.query.gino.all():
             user = await TwitterUser.query.where(TwitterUser.id == _user.twitter_id) \
                 .where(TwitterUser.webhook_id == _user.webhook_id).gino.first()
+            if not user:
+                continue
             auth = await Auth.query.where(Auth.id == user.discord_user_id).gino.first()
             twitter = get_client(token=auth.token, secret=auth.secret)
             loop.create_task(check_twitter(user, twitter))
