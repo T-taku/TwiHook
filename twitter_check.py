@@ -75,29 +75,30 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
         params['count'] = 1
     while not loop.is_closed():
         await asyncio.sleep(twitter_user.period * 60)
-        u = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id)\
-            .where(TwitterUser.id == twitter_user.id).gino.first()
-        if not u:
-            break
-
-        if last_id:
-            params['since_id'] = last_id
         try:
-            r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
-        except Exception:
-            raise
-        for tweet in r[::-1]:
-            if tweet['retweeted']:
-                continue
-            if not twitter_user.text:
-                loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
-                                                           '管理人は設定をお願いします。'))
-                continue
-            text = replace_ifttt(twitter_user.text, tweet)
-            loop.create_task(send_webhook(webhook_url, text))
+            u = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id)\
+                .where(TwitterUser.id == twitter_user.id).gino.first()
+            if not u:
+                break
 
-        last_id = r[0]['id']
-        params['count'] = 20
+            if last_id:
+                params['since_id'] = last_id
+            r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
+            for tweet in r[::-1]:
+                if tweet['retweeted']:
+                    continue
+                if not twitter_user.text:
+                    loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
+                                                               '管理人は設定をお願いします。'))
+                    continue
+                text = replace_ifttt(twitter_user.text, tweet)
+                loop.create_task(send_webhook(webhook_url, text))
+
+            last_id = r[0]['id']
+            params['count'] = 20
+        except Exception:
+            import traceback
+            traceback.print_exc()
 
 
 async def main():

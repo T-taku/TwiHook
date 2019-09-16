@@ -42,8 +42,7 @@ class Webhook(commands.Cog):
 
     @webhook.command()
     async def manage(self, ctx, webhook_id):
-        """登録されたWebhookに
-        紐つけるtwitterユーザーなどを設定します。"""
+        """登録されたWebhookに紐つけるtwitterユーザーなどを設定します。"""
         db_webhook = await DBWebhook.query.where(DBWebhook.discord_user_id == str(ctx.author.id)).where(DBWebhook.id == webhook_id).gino.first()
 
         if not db_webhook:
@@ -90,6 +89,13 @@ class Webhook(commands.Cog):
                                 f'チャンネル: {channel_name}\n')
 
         await ctx.send(embed=embed)
+
+    # @webhook.command()
+    # async def delete(self, ctx, webhook_id):
+    #     webhook = await DBWebhook.query.where(DBWebhook.id == webhook_id) \
+    #         .where(DBWebhook.discord_user_id == str(ctx.author.id)).gino.first()
+    #     if not webhook:
+    #         pass
 
 
 def setup(bot):
