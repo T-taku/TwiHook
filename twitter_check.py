@@ -77,7 +77,8 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
         await asyncio.sleep(twitter_user.period * 60)
         try:
             u = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id)\
-                .where(TwitterUser.id == twitter_user.id).gino.first()
+                .where(TwitterUser.id == twitter_user.id)\
+                .where(TwitterUser.state == 1).gino.first()
             if not u:
                 break
 

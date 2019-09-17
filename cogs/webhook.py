@@ -6,7 +6,7 @@ import uuid
 from cogs.utils.auth import AuthManager
 from cogs.utils.checks import is_authenticated
 from cogs.utils.colours import red
-from cogs.utils.database import Webhook as DBWebhook
+from cogs.utils.database import Webhook as DBWebhook, TwitterUser
 from cogs.utils.manage import WebhookManager
 
 
@@ -15,16 +15,12 @@ class Webhook(commands.Cog):
         self.bot = bot
         self.db: AuthManager = bot.db
 
-    async def cog_command_error(self, ctx, error):
-        if isinstance(error, discord.InvalidArgument):
-            print('error')
-
     @commands.group()
     @is_authenticated()
     async def webhook(self, ctx):
         """`help webhook`コマンドからサブコマンドをご覧ください。"""
         if ctx.invoked_subcommand is None:
-            await ctx.send('このコマンドにはサブコマンドが必要です。')
+            await ctx.send(embed=discord.Embed(title='エラー', description='このコマンドにはサブコマンドが必要です。', color=red))
 
     @webhook.command()
     async def new(self, ctx, webhook_url):
@@ -64,6 +60,7 @@ class Webhook(commands.Cog):
 
     @webhook.command()
     async def list(self, ctx):
+        """あなたが追加したWebHookの一覧を表示します。"""
         db_webhook = await DBWebhook.query.where(DBWebhook.discord_user_id == str(ctx.author.id)).gino.all()
         embed = discord.Embed(title='あなたが登録したwebhook一覧')
         async with aiohttp.ClientSession() as session:
@@ -90,12 +87,22 @@ class Webhook(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    # @webhook.command()
-    # async def delete(self, ctx, webhook_id):
-    #     webhook = await DBWebhook.query.where(DBWebhook.id == webhook_id) \
-    #         .where(DBWebhook.discord_user_id == str(ctx.author.id)).gino.first()
-    #     if not webhook:
-    #         pass
+    @webhook.command()
+    async def delete(self, ctx, webhook_id):
+        webhook = await DBWebhook.query.where(DBWebhook.id == webhook_id) \
+            .where(DBWebhook.discord_user_id == str(ctx.author.id)).gino.first()
+        if not webhook:
+            await ctx.send(embed=discord.Embed(title='エラー', description='そのidのWebhookは登録されていません。', color=red))
+            return
+
+        twitter_users = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id)\
+            .where(TwitterUser.discord_user_id == str(ctx.author.id)).gino.all()
+
+        for user in twitter_users:
+            await user.delete()
+
+        await webhook.delete()
+        await ctx.send('削除が完了しました。')
 
 
 def setup(bot):

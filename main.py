@@ -14,6 +14,7 @@ extensions = [
     'cogs.manager',
     'cogs.webhook',
     'cogs.admin',
+    'cogs.meta',
 ]
 
 

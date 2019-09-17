@@ -1,0 +1,2 @@
+class Pagenator():
+    pass
