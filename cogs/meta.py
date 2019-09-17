@@ -25,7 +25,7 @@ class Meta(commands.Cog):
     async def info(self, ctx):
         """Botの詳細な情報を表示します。"""
         embed = discord.Embed(title=self.bot.user.name, color=colours.deepskyblue)
-        owner = self.bot.get_user(self.bot.owner_id)
+        owner = self.bot.get_user(212513828641046529)
         embed.set_author(name=str(owner), icon_url=owner.avatar_url)
 
         total_members = 0
