@@ -1,10 +1,13 @@
-from cogs.utils.database import *
-from cogs.utils.twitter import get_client
 import asyncio
+import base64
+import datetime
+
 import aiohttp
 import discord
-import datetime
-import base64
+
+from cogs.utils.database import *
+from cogs.utils.twitter import get_client
+
 loop = asyncio.get_event_loop()
 event = asyncio.Event()
 
@@ -76,10 +79,10 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
     while not loop.is_closed():
         await asyncio.sleep(twitter_user.period * 60)
         try:
-            u = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id)\
-                .where(TwitterUser.id == twitter_user.id)\
+            twitter_user = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id) \
+                .where(TwitterUser.id == twitter_user.id) \
                 .where(TwitterUser.state == 1).gino.first()
-            if not u:
+            if not twitter_user:
                 break
 
             if last_id:
@@ -91,6 +94,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
                 if not twitter_user.text:
                     loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
                                                                '管理人は設定をお願いします。'))
+                    print(f'webhook {webhook.id} is failed')
                     continue
                 text = replace_ifttt(twitter_user.text, tweet)
                 loop.create_task(send_webhook(webhook_url, text))
