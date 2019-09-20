@@ -20,8 +20,7 @@ class MyBot(commands.Bot):
             embed = discord.Embed(title='登録が必要です', description='`register`コマンドを使用して登録を行ってください。', color=red)
             await context.send(embed=embed)
         elif isinstance(exception, CannotPaginate):
-            embed = discord.Embed(title='エラー', description=exception.__context__, color=red)
-            await context.send(embed=embed)
+            await context.send(exception.__context__)
         else:
             raise exception
 
