@@ -4,6 +4,7 @@ from cogs.utils.auth import AuthManager
 from cogs.utils.error import NoAuthenticated, CannotPaginate
 from cogs.utils.colours import red
 import discord
+import asyncio
 
 
 class MyBot(commands.Bot):
@@ -12,6 +13,7 @@ class MyBot(commands.Bot):
         self.db = db
         self.auth = AuthManager(self, self.db)
         self.loop.create_task(self.db_setup())
+        self.loop.create_task(self.route_presence())
 
     async def on_command_error(self, context, exception):
         if isinstance(exception, NoAuthenticated):
@@ -26,4 +28,12 @@ class MyBot(commands.Bot):
     async def db_setup(self):
         await self.db.set_bind('postgresql://localhost/twihook')
         await self.db.gino.create_all()
+
+    async def route_presence(self):
+        await self.wait_until_ready()
+        while not self.is_closed():
+            await self.change_presence(activity=discord.Game(name='TwiHook - Twitter to Discord'))
+            await asyncio.sleep(5)
+            await self.change_presence(activity=discord.Game(name='Help -> /help'))
+            await asyncio.sleep(5)
 
