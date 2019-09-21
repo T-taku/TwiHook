@@ -22,7 +22,7 @@ class MyBot(commands.Bot):
         elif isinstance(exception, CannotPaginate):
             await context.send(exception.__context__)
         else:
-            raise exception
+            await context.send(exception.__context__)
 
     async def db_setup(self):
         await self.db.set_bind('postgresql://localhost/twihook')

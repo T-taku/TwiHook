@@ -27,6 +27,7 @@ class TwitterUser(db.Model):
     text = db.Column(db.String(20000), default='')
     period = db.Column(db.Integer, default=10)
     state = db.Column(db.Integer, default=1)
+    normal = db.Column(db.Integer, default=1)
     reply = db.Column(db.Integer, default=0)
     retweet = db.Column(db.Integer, default=0)
     uuid = db.Column(db.String(100), primary_key=True)
