@@ -165,7 +165,7 @@ class WebhookManager:
     async def trash_my_reactions(self):
         await self.refresh()
 
-        self.bot.loop.create_task(asyncio.gather(*[reaction.remove(self.me) for reaction in self.message.reactions]))
+        await asyncio.gather(*[reaction.remove(self.me) for reaction in self.message.reactions])
 
     async def refresh(self):
         self.message = await self.channel.fetch_message(self.message.id)
