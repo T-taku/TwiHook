@@ -2,3 +2,5 @@
 .python-version
 .idea/*
 t.py
+__pycache__/*
+*.pyc
