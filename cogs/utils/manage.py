@@ -557,11 +557,11 @@ class WebhookManager:
         emoji = str(reaction.emoji)
 
         if emoji == '0\N{combining enclosing keycap}':
-            await twitter_user.update(normal=inversion(twitter_user.normal))
+            await twitter_user.update(normal=inversion(twitter_user.normal)).apply()
         elif emoji == '1\N{combining enclosing keycap}':
-            await twitter_user.update(reply=inversion(twitter_user.reply))
+            await twitter_user.update(reply=inversion(twitter_user.reply)).apply()
         elif emoji == '2\N{combining enclosing keycap}':
-            await twitter_user.update(retweet=inversion(twitter_user.retweet))
+            await twitter_user.update(retweet=inversion(twitter_user.retweet)).apply()
 
         await self.change_setting(twitter_user)
 
