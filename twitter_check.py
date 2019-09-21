@@ -79,7 +79,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
     while not loop.is_closed():
         await asyncio.sleep(twitter_user.period * 60)
         try:
-            twitter_user = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id) \
+            twitter_user: TwitterUser = await TwitterUser.query.where(TwitterUser.webhook_id == webhook.id) \
                 .where(TwitterUser.id == twitter_user.id) \
                 .where(TwitterUser.state == 1).gino.first()
             if not twitter_user:
@@ -87,15 +87,27 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
 
             if last_id:
                 params['since_id'] = last_id
+
+            if not twitter_user.reply:
+                params['exclude_replies'] = 'true'
+            else:
+                params['exclude_replies'] = 'false'
+
             r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
             for tweet in r[::-1]:
                 if tweet['retweeted']:
-                    continue
+                    if not twitter_user.retweet:
+                        continue
+                else:
+                    if not twitter_user.normal:
+                        continue
+
                 if not twitter_user.text:
                     loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
                                                                '管理人は設定をお願いします。'))
                     print(f'webhook {webhook.id} is failed')
                     continue
+
                 text = replace_ifttt(twitter_user.text, tweet)
                 loop.create_task(send_webhook(webhook_url, text))
             params['count'] = 20
