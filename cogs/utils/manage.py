@@ -348,13 +348,16 @@ class WebhookManager:
             using_emojis[emoji] = user
             value += f'{emoji} : @{await self.get_screen_name(user.id)}\n'
         self.embed.add_field(name='ユーザー一覧', value=value, inline=False)
+
         await self.update()
         await self.add_reactions(using_emojis.keys())
+
         reaction, member = await self.bot.wait_for('reaction_add',
                                                    check=lambda _r, m: str(_r.emoji) in using_emojis.keys() and
                                                                     m.id == self.author.id and
                                                                     _r.message.id == self.message.id,
                                                    timeout=30)
+
         if str(reaction.emoji) == '\N{LEFTWARDS BLACK ARROW}':
             await self.trash_my_reactions()
             await self.move_page(reaction)
@@ -525,6 +528,7 @@ class WebhookManager:
 
         await self.trash_my_reactions()
         await self.change_setting(using_emojis[str(reaction.emoji)])
+        await self.change_tweet_setting()
 
     async def change_setting(self, twitter_user: TwitterUser):
 
