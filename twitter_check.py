@@ -53,6 +53,7 @@ async def check_new_user():
 async def wait_new_day():
     now_stamp = datetime.datetime.now().timestamp()
     new_day = datetime.datetime.today().timestamp() + 86400
+    print(new_day - now_stamp)
     await asyncio.sleep(new_day - now_stamp)
     event.set()
 
