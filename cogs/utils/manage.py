@@ -41,6 +41,7 @@ main_operations = {
     '\N{REGIONAL INDICATOR SYMBOL LETTER D}': '作成したフックを削除します。',
     '\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}': '個々のフックを停止・開始します。',
     '\N{INPUT SYMBOL FOR LATIN SMALL LETTERS}': 'フックの文章を変更します。',
+    '\N{LEVEL SLIDER}': 'リプライ,リツイートなどを表示するかの設定を行います。',
     '\N{INFORMATION SOURCE}': 'フックの情報を表示します。',
     '\N{CLOCK FACE ONE OCLOCK}': 'フックの読み込み間隔を変更します。5分もしくは1分に設定すると、サブスクリプションが発生します。',
     '\N{BLACK SQUARE FOR STOP}': '終了します',
@@ -91,6 +92,7 @@ class WebhookManager:
             ('main', '\N{REGIONAL INDICATOR SYMBOL LETTER D}'): self.delete_hook,
             ('main', '\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}'): self.stop_hook,
             ('main', '\N{INPUT SYMBOL FOR LATIN SMALL LETTERS}'): self.change_hook,
+            ('main', '\N{LEVEL SLIDER}'): self.change_tweet_setting,
             ('main', '\N{INFORMATION SOURCE}'): self.show_hook,
             ('main', '\N{CLOCK FACE ONE OCLOCK}'): self.change_clock,
         }
@@ -162,11 +164,8 @@ class WebhookManager:
 
     async def trash_my_reactions(self):
         await self.refresh()
-        for reaction in self.message.reactions:
-            try:
-                await reaction.remove(self.me)
-            except discord.NotFound:
-                pass
+        gather = asyncio.gather(*[reaction.remove(self.me) for reaction in self.message.reactions])
+        self.bot.loop.run_until_complete(gather)
 
     async def refresh(self):
         self.message = await self.channel.fetch_message(self.message.id)
@@ -353,8 +352,8 @@ class WebhookManager:
         await self.add_reactions(using_emojis.keys())
         reaction, member = await self.bot.wait_for('reaction_add',
                                                    check=lambda _r, m: str(_r.emoji) in using_emojis.keys() and
-                                                                       m.id == self.author.id and
-                                                                       _r.message.id == self.message.id,
+                                                                    m.id == self.author.id and
+                                                                    _r.message.id == self.message.id,
                                                    timeout=30)
         if str(reaction.emoji) == '\N{LEFTWARDS BLACK ARROW}':
             await self.trash_my_reactions()
@@ -494,6 +493,77 @@ class WebhookManager:
         await self.update()
         await self.trash_my_reactions()
         await self.wait_for_move()
+
+    async def change_tweet_setting(self):
+        self.update_state('change_tweet_setting')
+
+        if not await self.get_user_count():
+            await self.error('twitterアカウントが紐ついていません。')
+            return
+
+        self.embed = discord.Embed(title='ツイートの設定変更', description='変更したいフックの数字のリアクションをクリックしてください。',
+                                   color=deepskyblue)
+        value = ''
+
+        twitter_users = await self.get_twitter_users()
+        using_emojis = {'\N{LEFTWARDS BLACK ARROW}': '戻る'}
+        for user, emoji in zip(twitter_users, count_operations):
+            using_emojis[emoji] = user
+            value += f'{emoji} : @{await self.get_screen_name(user.id)}\n'
+        self.embed.add_field(name='ユーザー一覧', value=value, inline=False)
+        await self.update()
+        await self.add_reactions(using_emojis.keys())
+        reaction, member = await self.bot.wait_for('reaction_add',
+                                                   check=lambda _r, m: str(_r.emoji) in using_emojis.keys() and
+                                                                       m.id == self.author.id and
+                                                                       _r.message.id == self.message.id,
+                                                   timeout=30)
+        if str(reaction.emoji) == '\N{LEFTWARDS BLACK ARROW}':
+            await self.trash_my_reactions()
+            await self.move_page(reaction)
+            return
+
+        await self.trash_my_reactions()
+        await self.change_setting(using_emojis[str(reaction.emoji)])
+
+    async def change_setting(self, twitter_user: TwitterUser):
+
+        def get_on_off(num):
+            return 'ON' if num else 'OFF'
+
+        def inversion(num):
+            return 1 if not num else 0
+
+        using_emojis = {'\N{LEFTWARDS BLACK ARROW}': '戻る',
+                        '0\N{combining enclosing keycap}': f' ツイート {get_on_off(twitter_user.normal)}',
+                        '1\N{combining enclosing keycap}': f' リプライ {get_on_off(twitter_user.reply)}',
+                        '2\N{combining enclosing keycap}': f' リツイート {get_on_off(twitter_user.retweet)}',
+                        }
+
+        self.embed = discord.Embed(title='現在の状態', description='\n'.join([k+v for k, v in using_emojis.items()])
+                                                              + '\n変更したいリアクションを押してください')
+
+        await self.update()
+        await self.add_reactions(using_emojis.keys())
+        reaction, member = await self.bot.wait_for('reaction_add',
+                                                   check=lambda _r, m: str(_r.emoji) in using_emojis.keys() and
+                                                                       m.id == self.author.id and
+                                                                       _r.message.id == self.message.id,
+                                                   timeout=30)
+        if str(reaction.emoji) == '\N{LEFTWARDS BLACK ARROW}':
+            await self.trash_my_reactions()
+            return
+
+        emoji = str(reaction.emoji)
+
+        if emoji == '0\N{combining enclosing keycap}':
+            await twitter_user.update(normal=inversion(twitter_user.normal))
+        elif emoji == '1\N{combining enclosing keycap}':
+            await twitter_user.update(reply=inversion(twitter_user.reply))
+        elif emoji == '2\N{combining enclosing keycap}':
+            await twitter_user.update(retweet=inversion(twitter_user.retweet))
+
+        await self.change_setting(twitter_user)
 
     async def end(self):
         await self.message.delete()
