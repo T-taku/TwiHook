@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 import asyncio
 import uuid
-from cogs.utils.auth import AuthManager
 from cogs.utils.checks import is_authenticated
 from cogs.utils.colours import red
 from cogs.utils.database import Webhook as DBWebhook, TwitterUser

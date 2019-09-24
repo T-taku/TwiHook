@@ -5,7 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
 import uuid
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, NewUser, Search, NewSearch
+from cogs.utils.database import TwitterUser, NewUser, Search as DB_Search, NewSearch
 from .error import CannotPaginate
 import itertools
 
@@ -128,7 +128,8 @@ class Manager:
             .where(TwitterUser.discord_user_id == str(self.author.id)).gino.all()
 
     async def get_search(self):
-        return await Search.query.where(Search.webhook_id == str(self.webhook_data.id)).gino.all()
+        return await DB_Search.query.where(DB_Search.webhook_id == str(self.webhook_data.id))\
+            .where(DB_Search.discord_user_id == str(self.author.id)).gino.all()
 
     async def get_screen_name(self, twitter_id):
         r = await self.twitter.request('GET', 'users/show.json', params={'user_id': int(twitter_id)})
@@ -250,7 +251,7 @@ class Manager:
             elif emoji == finish_emoji:
                 return False
         _uuid = str(uuid.uuid4())
-        await Search.create(query=tobase64(message.content), webhook_id=self.webhook_data.id,
+        await DB_Search.create(query=tobase64(message.content), webhook_id=self.webhook_data.id,
                             discord_user_id=str(self.author.id), uuid=_uuid)
         await NewSearch.create(uuid=_uuid)
         await self.success('作成完了しました')
