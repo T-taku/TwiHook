@@ -3,6 +3,7 @@ from cogs.utils.database import db
 from cogs.utils.auth import AuthManager
 from cogs.utils.error import NoAuthenticated, CannotPaginate
 from cogs.utils.colours import red
+import traceback
 import discord
 import asyncio
 
@@ -20,9 +21,10 @@ class MyBot(commands.Bot):
             embed = discord.Embed(title='登録が必要です', description='`register`コマンドを使用して登録を行ってください。', color=red)
             await context.send(embed=embed)
         elif isinstance(exception, CannotPaginate):
-            await context.send(f'エラー {exception}: {exception.__context__}')
+            await context.send(f'エラー {exception}')
         else:
-            await context.send(f'エラー {exception}: {exception.__context__}')
+            await context.send(f'エラー {exception}')
+            traceback.print_exc()
 
     async def db_setup(self):
         await self.db.set_bind('postgresql://localhost/twihook')
