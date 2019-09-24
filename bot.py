@@ -24,7 +24,7 @@ class MyBot(commands.Bot):
             await context.send(f'エラー {exception}')
         else:
             await context.send(f'エラー {exception}')
-            traceback.print_exc()
+        traceback.print_exc()
 
     async def db_setup(self):
         await self.db.set_bind('postgresql://localhost/twihook')
