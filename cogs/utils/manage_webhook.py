@@ -101,7 +101,7 @@ class UserPaginate:
                     func = self.change_clock()
 
                 elif emoji == '2\N{combining enclosing keycap}':
-                    func = self.change_clock()
+                    func = self.change_setting()
 
                 elif emoji == '3\N{combining enclosing keycap}':
                     func = self.delete()
@@ -169,6 +169,8 @@ class UserPaginate:
         for key, value in emojis.items():
             self.embed.add_field(name=key, value=value)
 
+        await self.update()
+
         reaction, member, message = await self.double_wait(emojis)
 
         if reaction:
@@ -198,6 +200,8 @@ class UserPaginate:
                      '0\N{combining enclosing keycap}',
                      '1\N{combining enclosing keycap}',
                      '2\N{combining enclosing keycap}']
+
+        await self.update()
 
         reaction, member = await self.bot.wait_for('reaction_add', check=lambda
             r, m: m.id == self.author.id and str(r.emoji) in reactions,
@@ -248,6 +252,7 @@ class UserPaginate:
         embed = discord.Embed(title='変更したい番号のリアクションをクリックして下しあ。')
         for key, value in lists.items():
             embed.add_field(name=key, value=value)
+        await self.update()
 
         reaction, member = await self.bot.wait_for('reaction_add',
                                                    check=lambda _r, m: str(_r.emoji) in

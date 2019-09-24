@@ -44,7 +44,7 @@ class SearchPaginate:
 
     def add_search_data(self):
         self.embed.add_field(name='クエリ', value=frombase64(self.search._query))
-        self.embed.add_field(name='テキスト', value=frombase64(self.search.text))
+        self.embed.add_field(name='テキスト', value=frombase64(self.search.text) if self.search.text else '未設定')
         self.embed.add_field(name='監視間隔', value=f'{self.search.period}分')
         self.embed.add_field(name='有効か', value='はい' if self.search.state else 'いいえ')
 
@@ -152,7 +152,7 @@ class SearchPaginate:
 
         for key, value in emojis.items():
             self.embed.add_field(name=key, value=value)
-
+        await self.update()
         reaction, member, message = await self.double_wait(emojis)
 
         if reaction:
@@ -183,7 +183,7 @@ class SearchPaginate:
 
         for key, value in emojis.items():
             self.embed.add_field(name=key, value=value)
-
+        await self.update()
         reaction, member, message = await self.double_wait(emojis)
 
         if reaction:
@@ -212,7 +212,7 @@ class SearchPaginate:
                      '0\N{combining enclosing keycap}',
                      '1\N{combining enclosing keycap}',
                      '2\N{combining enclosing keycap}']
-
+        await self.update()
         reaction, member = await self.bot.wait_for('reaction_add', check=lambda
             r, m: m.id == self.author.id and str(r.emoji) in reactions,
                                                    timeout=30)
