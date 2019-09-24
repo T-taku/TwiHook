@@ -124,13 +124,17 @@ class Manager:
         return 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(self.webhook_data)
 
     async def get_twitter_users(self):
-        return await TwitterUser.query.where(TwitterUser.webhook_id == str(self.webhook_data.id))\
+        r = await TwitterUser.query.where(TwitterUser.webhook_id == str(self.webhook_data.id))\
             .where(TwitterUser.discord_user_id == str(self.author.id)).gino.all()
+        return r
 
     async def get_search(self):
         print(Search)
-        print(Search.query)
-        return await Search.query.gino.all()
+        print(type(Search.query))
+        print(type(Search.query.gino))
+        r = await Search.query.gino.all()
+
+        return r
 
     async def get_screen_name(self, twitter_id):
         r = await self.twitter.request('GET', 'users/show.json', params={'user_id': int(twitter_id)})
