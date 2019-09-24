@@ -244,15 +244,14 @@ class UserPaginate:
         return True
 
     async def change_setting(self):
-        print(1)
         lists = {
             '0\N{combining enclosing keycap}': f' ツイート {get_on_off(self.user.normal)}',
             '1\N{combining enclosing keycap}': f' リプライ {get_on_off(self.user.reply)}',
             '2\N{combining enclosing keycap}': f' リツイート {get_on_off(self.user.retweet)}',
         }
-        embed = discord.Embed(title='変更したい番号のリアクションをクリックして下しあ。')
+        self.embed = discord.Embed(title='変更したい番号のリアクションをクリックして下しあ。')
         for key, value in lists.items():
-            embed.add_field(name=key, value=value)
+            self.embed.add_field(name=key, value=value)
         await self.update()
 
         reaction, member = await self.bot.wait_for('reaction_add',
