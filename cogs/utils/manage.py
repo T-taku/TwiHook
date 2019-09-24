@@ -129,7 +129,7 @@ class Manager:
         return r
 
     async def get_search(self):
-        print(Search)
+        print(type(Search))
         print(type(Search.query))
         print(type(Search.query.gino))
         r = await Search.query.gino.all()
