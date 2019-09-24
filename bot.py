@@ -17,7 +17,6 @@ class MyBot(commands.Bot):
         self.loop.create_task(self.route_presence())
 
     async def on_command_error(self, context, exception):
-        traceback.print_exc()
         if isinstance(exception, NoAuthenticated):
             embed = discord.Embed(title='登録が必要です', description='`register`コマンドを使用して登録を行ってください。', color=red)
             await context.send(embed=embed)
@@ -25,6 +24,7 @@ class MyBot(commands.Bot):
             await context.send(f'エラー {exception}')
         else:
             await context.send(f'エラー {exception}')
+            raise exception
 
     async def db_setup(self):
         await self.db.set_bind('postgresql://localhost/twihook')
