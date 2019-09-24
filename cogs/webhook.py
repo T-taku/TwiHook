@@ -13,7 +13,7 @@ from cogs.utils.manage import Manager
 class Webhook(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db: AuthManager = bot.db
+        self.db = bot.db
 
     @commands.group()
     @is_authenticated()
@@ -48,9 +48,11 @@ class Webhook(commands.Cog):
         if db_webhook.discord_user_id != str(ctx.author.id):
             await ctx.send(embed=discord.Embed(title='無効なidです。', color=red))
             return
+        auth = await self.bot.auth.get_client(ctx)
 
         manager = Manager(self.bot, ctx, db_webhook,
-                          'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(db_webhook))
+                          'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(db_webhook),
+                          auth)
 
         r = await manager.main_menu()
         if r:

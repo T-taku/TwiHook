@@ -5,7 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
 import uuid
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, Subscription, NewUser, Search, NewSearch
+from cogs.utils.database import TwitterUser, NewUser, Search, NewSearch
 from .error import CannotPaginate
 import itertools
 
@@ -50,7 +50,7 @@ def frombase64(text):
 
 
 class Manager:
-    def __init__(self, bot, ctx, webhook_data, webhook_url):
+    def __init__(self, bot, ctx, webhook_data, webhook_url, twitter):
         self.bot = bot
         self.ctx = ctx
         self.me = ctx.me
@@ -62,7 +62,7 @@ class Manager:
         self.embed = None
         self.message = None
         self.state = None
-        self.twitter = None
+        self.twitter = twitter
 
         if ctx.guild is not None:
             self.permissions = self.channel.permissions_for(ctx.guild.me)

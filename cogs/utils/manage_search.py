@@ -1,17 +1,13 @@
-import re
-import base64
-import discord
-from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
-import uuid
-from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, Subscription, NewUser, Search, NewSearch
-from .error import CannotPaginate
+import base64
 
+import discord
+
+from cogs.utils.colours import deepskyblue, red
+from cogs.utils.database import Subscription, Search
 
 back_emoji = '\N{LEFTWARDS BLACK ARROW}'
 finish_emoji = '\N{BLACK SQUARE FOR STOP}'
-
 
 operations = {
     back_emoji: '戻る',
@@ -74,7 +70,7 @@ class SearchPaginate:
                 await self.update()
 
                 reaction, member = await self.bot.wait_for('reaction_add', check=lambda r, m:
-                                                           str(r.emoji) in operations.keys() and m.id == self.author.id,
+                str(r.emoji) in operations.keys() and m.id == self.author.id,
                                                            timeout=120)
 
                 emoji = str(reaction.emoji)
