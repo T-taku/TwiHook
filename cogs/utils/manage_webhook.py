@@ -5,7 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
 import uuid
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, Subscription, NewUser, Search, NewSearch
+from cogs.utils.database import TwitterUser, Subscription
 
 
 def get_on_off(num):
