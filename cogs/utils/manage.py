@@ -17,10 +17,6 @@ finish_emoji = '\N{BLACK SQUARE FOR STOP}'
 
 twitter_compile = re.compile(r'twitter\.com/(?P<username>[a-zA-Z0-9_\-.]{3,15})')
 keys = ['0\N{combining enclosing keycap}', '1\N{combining enclosing keycap}', '2\N{combining enclosing keycap}']
-all_keys = ['0\N{combining enclosing keycap}',
-            '1\N{combining enclosing keycap}',
-            '2\N{combining enclosing keycap}',
-            '3\N{combining enclosing keycap}']
 all_emojis = [
     back_emoji,
     '0\N{combining enclosing keycap}',
@@ -191,10 +187,8 @@ class Manager:
         search = await self.get_search()
         if search:
             operations['3\N{combining enclosing keycap}'] = f'検索監視を編集する'
-            tf.append(True)
         else:
             operations['3\N{combining enclosing keycap}'] = f'検索監視を作成する'
-            tf.append(False)
 
         main_embed = discord.Embed(title=f'Webhook id:{self.webhook_data.id} を編集',
                                    description='Webhookを編集します。リアクションをクリックしてください',
@@ -223,19 +217,20 @@ class Manager:
                 elif emoji == finish_emoji:
                     result = False
 
-                if tf[all_keys.index(emoji)]:
-                    if all_keys.index(emoji) == 3:
-                        result = await SearchPaginate(self.ctx, self.message,
-                                                      self.webhook_data, (await self.get_search())).menu()
-                    else:
-                        result = await UserPaginate(self.ctx, self.message,
-                                                    self.webhook_data,
-                                                    (await self.get_twitter_users())[all_keys.index(emoji)]).menu()
-                elif not tf[all_keys.index(emoji)]:
-                    if all_keys.index(emoji) == 3:
+                if emoji == '3\N{combining enclosing keycap}':
+                    search = await self.get_search()
+                    if not search:
                         result = await self.new_search()
                     else:
-                        result = await self.new_hook()
+                        result = await SearchPaginate(self.ctx, self.message,
+                                                      self.webhook_data, search).menu()
+
+                elif tf[keys.index(emoji)]:
+                    result = await UserPaginate(self.ctx, self.message,
+                                                self.webhook_data,
+                                                (await self.get_twitter_users())[keys.index(emoji)]).menu()
+                elif not tf[keys.index(emoji)]:
+                    result = await self.new_hook()
 
                 if not result:
                     await self.end()
