@@ -201,7 +201,7 @@ class Manager:
                                    color=deepskyblue)
         operations[finish_emoji] = '終了する'
         for key, value in operations.items():
-            main_embed.add_field(name=key, value=value)
+            main_embed.add_field(name=key, value=value, inline=False)
         return main_embed, tf
 
     async def main_menu(self):

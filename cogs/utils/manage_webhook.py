@@ -54,7 +54,7 @@ class UserPaginate:
         self.user: TwitterUser = user
 
     def add_webhook_data(self):
-        self.embed.add_field(name='テキスト', value=self.user.text)
+        self.embed.add_field(name='テキスト', value=frombase64(self.user.text))
         self.embed.add_field(name='監視間隔', value=f'{self.user.period}分')
         self.embed.add_field(name='有効か', value='はい' if self.user.state else 'いいえ')
         self.embed.add_field(name='オンオフ状態', value=f'ツイート {get_on_off(self.user.normal)}\n'

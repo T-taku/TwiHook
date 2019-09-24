@@ -5,7 +5,7 @@ import asyncio
 import uuid
 from cogs.utils.checks import is_authenticated
 from cogs.utils.colours import red
-from cogs.utils.database import Webhook as DBWebhook, TwitterUser
+from cogs.utils.database import Webhook as DBWebhook, TwitterUser, Subscription
 from cogs.utils.manage import Manager
 
 
@@ -47,6 +47,11 @@ class Webhook(commands.Cog):
         if db_webhook.discord_user_id != str(ctx.author.id):
             await ctx.send(embed=discord.Embed(title='無効なidです。', color=red))
             return
+
+        subscription = await Subscription.query.where(Subscription.id == str(ctx.author.id)).gino.first()
+        if not subscription:
+            await Subscription.create(id=str(ctx.author.id))
+
         auth = await self.bot.auth.get_client(ctx)
 
         manager = Manager(self.bot, ctx, db_webhook,
