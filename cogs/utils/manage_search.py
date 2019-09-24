@@ -4,7 +4,7 @@ import base64
 import discord
 
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import Subscription, Search
+from cogs.utils.database import Subscription, TwitterSearch
 
 back_emoji = '\N{LEFTWARDS BLACK ARROW}'
 finish_emoji = '\N{BLACK SQUARE FOR STOP}'
@@ -40,7 +40,7 @@ class SearchPaginate:
         self.author = ctx.author
         self.webhook_data = webhook_data
         self.embed = discord.Embed()
-        self.search: Search = search
+        self.search: TwitterSearch = search
 
     def add_search_data(self):
         self.embed.add_field(name='クエリ', value=frombase64(self.search.query))
