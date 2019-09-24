@@ -244,6 +244,7 @@ class UserPaginate:
         return True
 
     async def change_setting(self):
+        print(1)
         lists = {
             '0\N{combining enclosing keycap}': f' ツイート {get_on_off(self.user.normal)}',
             '1\N{combining enclosing keycap}': f' リプライ {get_on_off(self.user.reply)}',
