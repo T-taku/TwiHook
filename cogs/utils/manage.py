@@ -214,10 +214,11 @@ class Manager:
                 emoji = str(reaction.emoji)
                 if emoji == back_emoji:
                     return True
+
                 elif emoji == finish_emoji:
                     result = False
 
-                if emoji == '3\N{combining enclosing keycap}':
+                elif emoji == '3\N{combining enclosing keycap}':
                     search = await self.get_search()
                     if not search:
                         result = await self.new_search()
