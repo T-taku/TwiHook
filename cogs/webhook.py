@@ -53,7 +53,6 @@ class Webhook(commands.Cog):
         manager = Manager(self.bot, ctx, db_webhook,
                           'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(db_webhook),
                           auth)
-        print(1)
         r = await manager.main_menu()
         if r:
             message = ctx.message
