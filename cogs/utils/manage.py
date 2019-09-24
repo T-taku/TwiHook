@@ -5,7 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
 import uuid
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, NewUser, Search as DB_Search, NewSearch
+from cogs.utils.database import TwitterUser, NewUser, Search, NewSearch
 from .error import CannotPaginate
 import itertools
 
@@ -124,12 +124,13 @@ class Manager:
         return 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(self.webhook_data)
 
     async def get_twitter_users(self):
-        return await TwitterUser.query.where(TwitterUser.webhook_id == str(self.webhook_data.id))\
+        return TwitterUser.query.where(TwitterUser.webhook_id == str(self.webhook_data.id))\
             .where(TwitterUser.discord_user_id == str(self.author.id)).gino.all()
 
     async def get_search(self):
-        return await DB_Search.query.where(DB_Search.webhook_id == str(self.webhook_data.id))\
-            .where(DB_Search.discord_user_id == str(self.author.id)).gino.all()
+        print(Search)
+        print(Search.query)
+        return Search.query.gino.all()
 
     async def get_screen_name(self, twitter_id):
         r = await self.twitter.request('GET', 'users/show.json', params={'user_id': int(twitter_id)})
@@ -251,7 +252,7 @@ class Manager:
             elif emoji == finish_emoji:
                 return False
         _uuid = str(uuid.uuid4())
-        await DB_Search.create(query=tobase64(message.content), webhook_id=self.webhook_data.id,
+        await Search.create(query=tobase64(message.content), webhook_id=self.webhook_data.id,
                             discord_user_id=str(self.author.id), uuid=_uuid)
         await NewSearch.create(uuid=_uuid)
         await self.success('作成完了しました')
