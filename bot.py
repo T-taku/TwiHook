@@ -20,9 +20,9 @@ class MyBot(commands.Bot):
             embed = discord.Embed(title='登録が必要です', description='`register`コマンドを使用して登録を行ってください。', color=red)
             await context.send(embed=embed)
         elif isinstance(exception, CannotPaginate):
-            await context.send(f'エラー {exception.__name__}: {exception.__context__}')
+            await context.send(f'エラー {exception}: {exception.__context__}')
         else:
-            await context.send(f'エラー {exception.__name__}: {exception.__context__}')
+            await context.send(f'エラー {exception}: {exception.__context__}')
 
     async def db_setup(self):
         await self.db.set_bind('postgresql://localhost/twihook')
