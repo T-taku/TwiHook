@@ -174,7 +174,7 @@ class Manager:
         operations = {
             back_emoji: 'Webhook一覧へ',
         }
-        for key, value in itertools.zip_longest(keys, users):
+        for key, value in itertools.zip_longest(keys, list(users)):
             if not value:
                 text = '新しいユーザーを作成する'
                 tf.append(False)
