@@ -128,8 +128,7 @@ class Manager:
             .where(TwitterUser.discord_user_id == str(self.author.id)).gino.all()
 
     async def get_search(self):
-        return await Search.query.where(Search.webhook_id == str(self.webhook_data.id))\
-                .where(Search.discord_user_id == str(self.author.id)).gino.all()
+        return await Search.query.where(Search.webhook_id == str(self.webhook_data.id)).gino.all()
 
     async def get_screen_name(self, twitter_id):
         r = await self.twitter.request('GET', 'users/show.json', params={'user_id': int(twitter_id)})
