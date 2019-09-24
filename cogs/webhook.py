@@ -7,7 +7,7 @@ from cogs.utils.auth import AuthManager
 from cogs.utils.checks import is_authenticated
 from cogs.utils.colours import red
 from cogs.utils.database import Webhook as DBWebhook, TwitterUser
-from cogs.utils.manage import WebhookManager
+from cogs.utils.manage import Manager
 
 
 class Webhook(commands.Cog):
@@ -49,14 +49,15 @@ class Webhook(commands.Cog):
             await ctx.send(embed=discord.Embed(title='無効なidです。', color=red))
             return
 
-        manager = WebhookManager(self.bot, ctx, db_webhook,
-                                 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(db_webhook))
+        manager = Manager(self.bot, ctx, db_webhook,
+                          'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(db_webhook))
 
-        try:
-            await manager.main_menu()
-        except asyncio.TimeoutError:
-            await manager.trash_my_reactions()
-            await manager.add_reactions(['\N{NO ENTRY SIGN}'])
+        r = await manager.main_menu()
+        if r:
+            message = ctx.message
+            message.content = f'{ctx.prefix}webhook list'
+            context = await self.bot.get_context(message)
+            await self.bot.invoke(context)
 
     @webhook.command()
     async def list(self, ctx):

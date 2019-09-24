@@ -40,8 +40,7 @@ async def check_new_user():
     while not loop.is_closed():
         await asyncio.sleep(60)
         for _user in await NewUser.query.gino.all():
-            user = await TwitterUser.query.where(TwitterUser.id == _user.twitter_id) \
-                .where(TwitterUser.webhook_id == _user.webhook_id).gino.first()
+            user = await TwitterUser.query.where(TwitterUser.uuid == _user.uuid).gino.first()
             if not user:
                 continue
             auth = await Auth.query.where(Auth.id == user.discord_user_id).gino.first()

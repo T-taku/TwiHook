@@ -33,17 +33,30 @@ class TwitterUser(db.Model):
     uuid = db.Column(db.String(100), primary_key=True)
 
 
+class Search(db.Model):
+    __tablename__ = 'search'
+    query = db.Column(db.String(2000))
+    webhook_id = db.Column(db.String(100))
+    discord_user_id = db.Column(db.String(100))
+    text = db.Column(db.String(20000), default='')
+    period = db.Column(db.Integer, default=10)
+    state = db.Column(db.Integer, default=1)
+    uuid = db.Column(db.String(100), primary_key=True)
+
+
 class Subscription(db.Model):
     __tablename__ = 'subscription'
-    id = db.Column(db.String(80))
+    id = db.Column(db.String(80), primary_key=True)
     is_special = db.Column(db.Integer, default=0)
-    residue = db.Column(db.Integer, default=1)
-    date = state = db.Column(db.Integer, default=1)
-    uuid = db.Column(db.String(100), primary_key=True)
+    residue = db.Column(db.Integer, default=0)
+    max = db.Column(db.Integer, default=0)
 
 
 class NewUser(db.Model):
     __tablename__ = 'newuser'
-    webhook_id = db.Column(db.String(100))
-    twitter_id = db.Column(db.String(100))
+    uuid = db.Column(db.String(100), primary_key=True)
+
+
+class NewSearch(db.Model):
+    __tablename__ = 'newsearch'
     uuid = db.Column(db.String(100), primary_key=True)
