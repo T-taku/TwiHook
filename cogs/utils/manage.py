@@ -83,10 +83,12 @@ class Manager:
 
     async def double_wait(self, emojis):
         event = asyncio.Event()
+        if isinstance(emojis, dict):
+            emojis = list(emojis.keys())
 
         async def reaction_wait():
             reaction, member = await self.bot.wait_for('reaction_add', check=lambda
-                r, m: m.id == self.author.id and str(r.emoji) in [back_emoji, finish_emoji] + list(emojis.keys()),
+                r, m: m.id == self.author.id and str(r.emoji) in [back_emoji, finish_emoji] + emojis,
                                                        timeout=30)
             return reaction, member
 
@@ -218,16 +220,16 @@ class Manager:
                 elif emoji == finish_emoji:
                     result = False
 
-                if tf[all_emojis.index(emoji)]:
-                    if all_emojis.index(emoji) == 3:
+                if tf[all_keys.index(emoji)]:
+                    if all_keys.index(emoji) == 3:
                         result = await SearchPaginate(self.ctx, self.message,
                                                       self.webhook_data, (await self.get_search())).menu()
                     else:
                         result = await UserPaginate(self.ctx, self.message,
                                                     self.webhook_data,
-                                                    (await self.get_twitter_users())[all_emojis.index(emoji)]).menu()
-                elif not tf[all_emojis.index(emoji)]:
-                    if all_emojis.index(emoji) == 3:
+                                                    (await self.get_twitter_users())[all_keys.index(emoji)]).menu()
+                elif not tf[all_keys.index(emoji)]:
+                    if all_keys.index(emoji) == 3:
                         result = await self.new_search()
                     else:
                         result = await self.new_hook()
