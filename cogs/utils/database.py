@@ -34,7 +34,7 @@ class TwitterUser(db.Model):
 
 
 class Search(db.Model):
-    __tablename__ = 'search'
+    __tablename__ = 'twitter_search'
     query = db.Column(db.String(2000))
     webhook_id = db.Column(db.String(100))
     discord_user_id = db.Column(db.String(100))
