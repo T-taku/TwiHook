@@ -199,6 +199,9 @@ class Manager:
         main_embed = discord.Embed(title=f'Webhook id:{self.webhook_data.id} を編集',
                                    description='Webhookを編集します。リアクションをクリックしてください',
                                    color=deepskyblue)
+        operations[finish_emoji] = '終了する'
+        for key, value in operations.items():
+            main_embed.add_field(name=key, value=value)
         return main_embed, tf
 
     async def main_menu(self):
