@@ -5,7 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest
 import asyncio
 import uuid
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import TwitterUser, NewUser, TwitterSearch, NewSearch
+from cogs.utils.database import TwitterUser, NewUser, Search, NewSearch
 from .error import CannotPaginate
 import itertools
 
@@ -129,10 +129,8 @@ class Manager:
         return r
 
     async def get_search(self):
-        print(type(TwitterSearch))
-        print(type(TwitterSearch.query))
-        print(type(TwitterSearch.query.gino))
-        r = await TwitterSearch.query.gino.all()
+        r = await Search.query.where(Search.webhook_id == str(self.webhook_data.id))\
+            .where(Search.discord_user_id == str(self.author.id)).gino.first()
 
         return r
 
@@ -256,7 +254,7 @@ class Manager:
             elif emoji == finish_emoji:
                 return False
         _uuid = str(uuid.uuid4())
-        await TwitterSearch.create(query=tobase64(message.content), webhook_id=self.webhook_data.id,
+        await Search.create(_query=tobase64(message.content), webhook_id=self.webhook_data.id,
                             discord_user_id=str(self.author.id), uuid=_uuid)
         await NewSearch.create(uuid=_uuid)
         await self.success('作成完了しました')

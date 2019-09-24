@@ -4,7 +4,7 @@ import base64
 import discord
 
 from cogs.utils.colours import deepskyblue, red
-from cogs.utils.database import Subscription, TwitterSearch
+from cogs.utils.database import Subscription, Search
 
 back_emoji = '\N{LEFTWARDS BLACK ARROW}'
 finish_emoji = '\N{BLACK SQUARE FOR STOP}'
@@ -40,10 +40,10 @@ class SearchPaginate:
         self.author = ctx.author
         self.webhook_data = webhook_data
         self.embed = discord.Embed()
-        self.search: TwitterSearch = search
+        self.search: Search = search
 
     def add_search_data(self):
-        self.embed.add_field(name='クエリ', value=frombase64(self.search.query))
+        self.embed.add_field(name='クエリ', value=frombase64(self.search._query))
         self.embed.add_field(name='テキスト', value=frombase64(self.search.text))
         self.embed.add_field(name='監視間隔', value=f'{self.search.period}分')
         self.embed.add_field(name='有効か', value='はい' if self.search.state else 'いいえ')
@@ -163,11 +163,11 @@ class SearchPaginate:
                 return False
 
             if emoji in emojis.keys():
-                await self.search.update(query=tobase64(emojis[emoji])).apply()
+                await self.search.update(_query=tobase64(emojis[emoji])).apply()
                 await self.success('変更完了しました。')
                 return True
         elif message:
-            await self.search.update(query=tobase64(message.content))
+            await self.search.update(_query=tobase64(message.content))
             await self.success('変更完了しました。')
             return True
 
