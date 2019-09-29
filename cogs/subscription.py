@@ -56,7 +56,7 @@ class SubscriptionCog(commands.Cog):
 
     @subscription.command()
     async def connect(self, ctx, discord_token, pixiv_token):
-        if not pixiv_token in self.pixivs.keys():
+        if not pixiv_token in self.bot.pixivs.keys():
             await ctx.send('pixivの方での認証がされていません。もしされていて、エラーが出る場合は公式サーバーからお取り合わせください。')
             return
 
@@ -69,7 +69,7 @@ class SubscriptionCog(commands.Cog):
             await ctx.send('すでにサブスクリプションの認証が終了しています。追加のhookの場合は自動で処理されます。')
             return
 
-        num, course = self.pixivs[pixiv_token]
+        num, course = self.bot.ixivs[pixiv_token]
         del self.bot.pixivs[pixiv_token]
         await subscription.update(residue=num, max=num, is_special=course).apply()
         await ctx.send('認証が完了しました。')
