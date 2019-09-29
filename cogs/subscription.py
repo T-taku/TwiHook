@@ -35,7 +35,7 @@ class SubscriptionCog(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             r = await session.get(pixiv_user_url)
-            soup = BeautifulSoup(await r.text())
+            soup = BeautifulSoup(await r.text(), features="lxml")
 
         find = soup.find_all(class_='error-title')
         if not find:
