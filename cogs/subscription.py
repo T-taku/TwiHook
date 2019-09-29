@@ -16,7 +16,7 @@ class SubscriptionCog(commands.Cog):
 
     @commands.group(aliases=['subs'])
     @is_authenticated()
-    async def subscription(self):
+    async def subscription(self, ctx):
         """サブスクリプション についてのコマンドです。省略形はsubsです。詳しくはhelp subsにて。"""
         pass
 
