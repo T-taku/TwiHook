@@ -7,7 +7,7 @@ from discord.ext import commands
 import discord
 listen_channel = 627785620139409418
 
-pixiv_compile = re.compile('https://www\.pixiv\.net/member\.php\?id=([0-9]+)')
+pixiv_compile = re.compile(r'https://www\.pixiv\.net/member\.php\?id=([0-9]+)')
 
 
 class SubscriptionCog(commands.Cog):
