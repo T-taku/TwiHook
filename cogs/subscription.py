@@ -98,3 +98,5 @@ class SubscriptionCog(commands.Cog):
         self.bot.pixivs[subscription.pixiv_token] = [int(num), int(course)]
 
 
+def setup(bot):
+    return bot.add_cog(SubscriptionCog(bot))
