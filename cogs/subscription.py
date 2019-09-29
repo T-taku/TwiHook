@@ -35,10 +35,10 @@ class SubscriptionCog(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             r = await session.get(pixiv_user_url)
-            soup = BeautifulSoup(await r.text(), features="lxml")
+            text = await r.text()
+            soup = BeautifulSoup(text, features="lxml")
 
-        find = soup.find_all(class_='error-title')
-        if not find:
+        if '該当ユーザーは既に退会したか、存在しないユーザーIDです。' in text:
             await ctx.send('アカウントが存在しません。')
             return
         name = soup.find('h1', class_='name').text
