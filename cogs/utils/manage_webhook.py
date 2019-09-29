@@ -186,7 +186,7 @@ class UserPaginate:
                 return True
 
         elif message:
-            await self.user.update(text=tobase64(message.content))
+            await self.user.update(text=tobase64(message.content)).apply()
             await self.success('変更完了しました。')
             return True
 
