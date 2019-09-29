@@ -17,6 +17,7 @@ class SubscriptionCog(commands.Cog):
     @commands.group(aliases=['subs'])
     @is_authenticated()
     async def subscription(self):
+        """サブスクリプション についてのコマンドです。省略形はsubsです。詳しくはhelp subsにて。"""
         pass
 
     @subscription.command()
@@ -56,6 +57,7 @@ class SubscriptionCog(commands.Cog):
 
     @subscription.command()
     async def connect(self, ctx, discord_token, pixiv_token):
+        """サブスクリプションの認証をします。"""
         if not pixiv_token in self.bot.pixivs.keys():
             await ctx.send('pixivの方での認証がされていません。もしされていて、エラーが出る場合は公式サーバーからお取り合わせください。')
             return

@@ -23,6 +23,8 @@ class MyBot(commands.Bot):
             await context.send(embed=embed)
         elif isinstance(exception, CannotPaginate):
             await context.send(f'エラー {exception}')
+        elif isinstance(exception, commands.CommandNotFound):
+            return
         else:
             await context.send(f'エラー {exception}')
             raise exception
