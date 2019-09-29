@@ -50,6 +50,9 @@ class Subscription(db.Model):
     is_special = db.Column(db.Integer, default=0)
     residue = db.Column(db.Integer, default=0)
     max = db.Column(db.Integer, default=0)
+    discord_token = db.Column(db.String(80))
+    pixiv_token = db.Column(db.String(80))
+    pixiv_user_id = db.Column(db.String(80), default='')
 
 
 class NewUser(db.Model):

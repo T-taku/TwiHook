@@ -3,12 +3,13 @@ from cogs.utils.database import db
 from cogs.utils.auth import AuthManager
 from cogs.utils.error import NoAuthenticated, CannotPaginate
 from cogs.utils.colours import red
-import traceback
 import discord
 import asyncio
 
 
 class MyBot(commands.Bot):
+    pixivs = {}
+
     def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, **options)
         self.db = db
@@ -37,4 +38,3 @@ class MyBot(commands.Bot):
             await asyncio.sleep(5)
             await self.change_presence(activity=discord.Game(name='Help -> /help'))
             await asyncio.sleep(5)
-

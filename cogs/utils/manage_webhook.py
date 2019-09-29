@@ -251,7 +251,7 @@ class UserPaginate:
         }
         self.embed = discord.Embed(title='変更したい番号のリアクションをクリックして下しあ。')
         for key, value in lists.items():
-            self.embed.add_field(name=key, value=value)
+            self.embed.add_field(name=key, value=value, inline=False)
         await self.update()
 
         reaction, member = await self.bot.wait_for('reaction_add',
