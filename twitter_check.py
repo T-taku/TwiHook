@@ -118,6 +118,44 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
             traceback.print_exc()
 
 
+async def check_search(search: Search, twitter):
+    last_id = None
+    q = search.text
+    webhook = await Webhook.query.where(Webhook.id == search.webhook_id).gino.first()
+    webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
+    params = {'q': q,
+              'lang': 'ja',
+              'result_type': 'recent',
+              'count': 40,
+              }
+    r = await twitter.request('GET', 'search/tweets.json', params=params)
+    if r:
+        last_id = r[0]['id']
+    while not loop.is_closed():
+        await asyncio.sleep(search.period)
+        try:
+            search = await Search.query.where(Search.uuid == search.uuid).gino.first()
+            if not search:
+                break
+
+            if last_id:
+                params['since_id'] = last_id
+
+            r = await twitter.request('GET', 'search/tweets.json', params=params)
+
+            for tweet in r[::-1]:
+                text = get_tweet_link(tweet)
+                loop.create_task(send_webhook(webhook_url, text))
+
+            if r:
+                last_id = r[0]['id']
+
+
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
+
 async def main():
     await db.set_bind('postgresql://localhost/twihook')
     await db.gino.create_all()
@@ -129,6 +167,12 @@ async def main():
         auth = await Auth.query.where(Auth.id == user.discord_user_id).gino.first()
         twitter = get_client(token=auth.token, secret=auth.secret)
         loop.create_task(check_twitter(user, twitter))
+    searches = await Search.query.gino.all()
+    for s in searches:
+        auth = await Auth.query.where(Auth.id == s.discord_user_id).gino.first()
+        twitter = get_client(token=auth.token, secret=auth.secret)
+        loop.create_task(check_search(s, twitter))
+
     loop.create_task(check_new_user())
     loop.create_task(wait_new_day())
 
