@@ -153,6 +153,7 @@ async def check_search(search: Search, twitter):
 
 
         except Exception:
+            print(search._query)
             import traceback
             traceback.print_exc()
 
