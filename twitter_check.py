@@ -121,7 +121,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
 
 async def check_search(search: Search, twitter):
     last_id = None
-    q = search._query
+    q = frombase64(search._query)
     webhook = await Webhook.query.where(Webhook.id == search.webhook_id).gino.first()
     webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
     params = {'q': q,
@@ -130,7 +130,6 @@ async def check_search(search: Search, twitter):
               'count': 1,
               }
     r = await twitter.request('GET', 'search/tweets.json', params=params)
-    print(r)
     if r:
         last_id = r[0]['id']
     params['count'] = 40
