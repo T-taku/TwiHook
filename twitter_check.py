@@ -116,7 +116,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
         except Exception:
             print('-----')
             import traceback
-            traceback.print_exc()
+            # traceback.print_exc()
 
 
 async def check_search(search: Search, twitter):
@@ -160,7 +160,7 @@ async def check_search(search: Search, twitter):
             print(frombase64(search._query))
             print()
             import traceback
-            traceback.print_exc()
+            # traceback.print_exc()
 
 
 async def main():
