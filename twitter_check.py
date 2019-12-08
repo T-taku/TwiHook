@@ -132,7 +132,8 @@ async def check_search(search: Search, twitter):
     if r["statuses"]:
         last_id = r["statuses"][0]['id']
 
-    print(r["statuses"])
+    for tweet in r["statuses"][::-1]:
+        print(tweet['id'])
     params['count'] = 40
     while not loop.is_closed():
         await asyncio.sleep(search.period * 60)
