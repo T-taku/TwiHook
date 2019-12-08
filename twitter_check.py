@@ -133,6 +133,7 @@ async def check_search(search: Search, twitter):
         last_id = r["statuses"][0]['id']
     params['count'] = 40
     while not loop.is_closed():
+        print(search.period)
         await asyncio.sleep(search.period * 60)
         try:
             search = await Search.query.where(Search.uuid == search.uuid).gino.first()
