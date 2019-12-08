@@ -116,7 +116,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
         except Exception:
             print('-----')
             import traceback
-            # traceback.print_exc()
+            traceback.print_exc()
 
 
 async def check_search(search: Search, twitter):
@@ -127,14 +127,12 @@ async def check_search(search: Search, twitter):
     params = {'q': q,
               'lang': 'ja',
               'result_type': 'recent',
+              'count': 50,
               }
     r = await twitter.request('GET', 'search/tweets.json', params=params)
     if r["statuses"]:
         last_id = r["statuses"][0]['id']
 
-    for tweet in r["statuses"][::-1]:
-        print(tweet['id'])
-    params['count'] = 40
     while not loop.is_closed():
         await asyncio.sleep(search.period * 60)
         try:
@@ -151,6 +149,9 @@ async def check_search(search: Search, twitter):
             r = await twitter.request('GET', 'search/tweets.json', params=params)
 
             for tweet in r["statuses"][::-1]:
+                if tweet["retweeted"]:
+                    continue
+
                 text = replace_ifttt(search.text, tweet)
                 loop.create_task(send_webhook(webhook_url, text))
 
@@ -162,7 +163,7 @@ async def check_search(search: Search, twitter):
             print(frombase64(search._query))
             print()
             import traceback
-            # traceback.print_exc()
+            traceback.print_exc()
 
 
 async def main():
