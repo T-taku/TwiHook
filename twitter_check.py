@@ -140,6 +140,9 @@ async def check_search(search: Search, twitter):
             if not search:
                 break
 
+            if not q != frombase64(search._query):
+                q = frombase64(search._query)
+
             if last_id:
                 params['since_id'] = last_id
 
