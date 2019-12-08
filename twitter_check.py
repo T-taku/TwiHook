@@ -120,7 +120,6 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
 
 
 async def check_search(search: Search, twitter):
-    return
     last_id = None
     q = frombase64(search._query)
     webhook = await Webhook.query.where(Webhook.id == search.webhook_id).gino.first()
@@ -128,14 +127,13 @@ async def check_search(search: Search, twitter):
     params = {'q': q,
               'lang': 'ja',
               'result_type': 'recent',
-              'count': 1,
               }
     r = await twitter.request('GET', 'search/tweets.json', params=params)
     if r["statuses"]:
         last_id = r["statuses"][0]['id']
     params['count'] = 40
     while not loop.is_closed():
-        await asyncio.sleep(search.period)
+        await asyncio.sleep(search.period * 60)
         try:
             search = await Search.query.where(Search.uuid == search.uuid).gino.first()
             if not search:
@@ -154,12 +152,11 @@ async def check_search(search: Search, twitter):
                 loop.create_task(send_webhook(webhook_url, text))
 
             if r["statuses"]:
-                last_id = r[0]['id']
-
+                last_id = r["statuses"][0]['id']
 
         except Exception:
             print('-----')
-            print(search._query)
+            print(frombase64(search._query))
             print()
             import traceback
             traceback.print_exc()
