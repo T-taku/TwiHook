@@ -120,6 +120,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
 
 
 async def check_search(search: Search, twitter):
+    return
     last_id = None
     q = frombase64(search._query)
     webhook = await Webhook.query.where(Webhook.id == search.webhook_id).gino.first()
