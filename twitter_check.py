@@ -130,8 +130,8 @@ async def check_search(search: Search, twitter):
               'count': 1,
               }
     r = await twitter.request('GET', 'search/tweets.json', params=params)
-    if r:
-        last_id = r[0]['id']
+    if r["statuses"]:
+        last_id = r["statuses"][0]['id']
     params['count'] = 40
     while not loop.is_closed():
         await asyncio.sleep(search.period)
@@ -148,11 +148,11 @@ async def check_search(search: Search, twitter):
 
             r = await twitter.request('GET', 'search/tweets.json', params=params)
 
-            for tweet in r[::-1]:
+            for tweet in r["statuses"][::-1]:
                 text = replace_ifttt(search.text, tweet)
                 loop.create_task(send_webhook(webhook_url, text))
 
-            if r:
+            if r["statuses"]:
                 last_id = r[0]['id']
 
 
