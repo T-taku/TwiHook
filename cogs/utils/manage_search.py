@@ -148,7 +148,7 @@ class SearchPaginate:
                                    color=deepskyblue)
         emojis = {}
         if self.search.text:
-            emojis['0\N{combining enclosing keycap}'] = frombase64(self.search.text)
+            emojis['0\N{combining enclosing keycap}'] = frombase64(self.search._query)
 
         for key, value in emojis.items():
             self.embed.add_field(name=key, value=value)
@@ -167,7 +167,7 @@ class SearchPaginate:
                 await self.success('変更完了しました。')
                 return True
         elif message:
-            await self.search.update(_query=tobase64(message.content))
+            await self.search.update(_query=tobase64(message.content)).apply()
             await self.success('変更完了しました。')
             return True
 
