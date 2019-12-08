@@ -114,6 +114,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
             if r:
                 last_id = r[0]['id']
         except Exception:
+            print('-----')
             import traceback
             traceback.print_exc()
 
@@ -129,6 +130,7 @@ async def check_search(search: Search, twitter):
               'count': 1,
               }
     r = await twitter.request('GET', 'search/tweets.json', params=params)
+    print(r)
     if r:
         last_id = r[0]['id']
     params['count'] = 40
@@ -153,7 +155,9 @@ async def check_search(search: Search, twitter):
 
 
         except Exception:
+            print('-----')
             print(search._query)
+            print()
             import traceback
             traceback.print_exc()
 
