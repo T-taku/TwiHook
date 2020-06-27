@@ -123,6 +123,8 @@ async def check_search(search: Search, twitter):
     last_id = None
     q = frombase64(search._query)
     webhook = await Webhook.query.where(Webhook.id == search.webhook_id).gino.first()
+    if not webhook:
+        return
     webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
     params = {'q': q,
               'lang': 'ja',
