@@ -72,7 +72,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
     webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
     params = {'user_id': int(twitter_user.id), 'count': 1, 'exclude_replies': 'false'}
     r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
-    print(r)
+    print(r[0])
     print()
     if r:
         last_id = r[0]['id']
