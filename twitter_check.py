@@ -58,6 +58,7 @@ async def wait_new_day():
 
 
 async def send_webhook(webhook_url, text):
+    return
     try:
         async with aiohttp.ClientSession() as session:
             webhook = discord.Webhook.from_url(webhook_url, adapter=discord.AsyncWebhookAdapter(session))
@@ -71,6 +72,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
     webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
     params = {'user_id': int(twitter_user.id), 'count': 20, 'exclude_replies': 'false'}
     r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
+    print(r)
     if r:
         last_id = r[0]['id']
     else:
@@ -103,8 +105,8 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
                         continue
 
                 if not twitter_user.text:
-                    loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
-                                                               '管理人は設定をお願いします。'))
+                    # loop.create_task(send_webhook(webhook_url, 'テキストが設定されていないため、表示することができませんでした。'
+                    #                                            '管理人は設定をお願いします。'))
                     print(f'webhook {webhook.id} is failed')
                     continue
 
