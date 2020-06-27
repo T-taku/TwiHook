@@ -73,6 +73,7 @@ async def check_twitter(twitter_user: TwitterUser, twitter):
     params = {'user_id': int(twitter_user.id), 'count': 20, 'exclude_replies': 'false'}
     r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
     print(r)
+    print()
     if r:
         last_id = r[0]['id']
     else:
