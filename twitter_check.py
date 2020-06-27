@@ -70,7 +70,7 @@ async def send_webhook(webhook_url, text):
 async def check_twitter(twitter_user: TwitterUser, twitter):
     webhook = await Webhook.query.where(Webhook.id == twitter_user.webhook_id).gino.first()
     webhook_url = 'https://discordapp.com/api/webhooks/{0.id}/{0.token}'.format(webhook)
-    params = {'user_id': int(twitter_user.id), 'count': 20, 'exclude_replies': 'false'}
+    params = {'user_id': int(twitter_user.id), 'count': 1, 'exclude_replies': 'false'}
     r = await twitter.request('GET', 'statuses/user_timeline.json', params=params)
     print(r)
     print()
