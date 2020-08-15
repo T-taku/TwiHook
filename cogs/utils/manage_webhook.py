@@ -249,7 +249,7 @@ class UserPaginate:
             '1\N{combining enclosing keycap}': f' リプライ {get_on_off(self.user.reply)}',
             '2\N{combining enclosing keycap}': f' リツイート {get_on_off(self.user.retweet)}',
         }
-        self.embed = discord.Embed(title='変更したい番号のリアクションをクリックして下しあ。')
+        self.embed = discord.Embed(title='変更したい番号のリアクションをクリックして下さい。')
         for key, value in lists.items():
             self.embed.add_field(name=key, value=value, inline=False)
         await self.update()
